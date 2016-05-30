@@ -12,7 +12,7 @@
         {
             "matches": ["https://www.facebook.com/*"],
             "css": [],
-            "js": ["commentout.js"]
+            "js": ["jquery-1.12.4.min.js", "commentout.js"]
         }
     ],
     "permissions": [
