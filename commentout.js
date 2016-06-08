@@ -21,13 +21,21 @@ var hideComment = function() {
         $(".UFIComment").each(function(index) {
             if (checkComment(this)) {
                 if (!$(this).hasClass("removed")) {
-                    $(this).css("background-color", "red");
+                    $(this).children().css("display", "none");
+                    _this = $(this).children();
                     $(this).addClass("removed");
-                    $(this).append("<p>Removed</p>");
+                    btn.onclick=function() {
+                      _this.toggle();
+                    }
+                    $(this).append(btn);
                 }
             }
-        }); 
+        });
     });
 };
+
+var btn = document.createElement("BUTTON");
+var t = document.createTextNode("HIDDEN");
+btn.appendChild(t);
 
 hideComment();
