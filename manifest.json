@@ -2,8 +2,8 @@
     "manifest_version": 2,
 
     "name": "CommentOut",
-    "description": "Blocks ads in fb comments",
-    "version": "1.0",
+    "description": "Blocks ads in Facebook comments",
+    "version": "1.2",
 
     "browser_action": {
         "default_icon": "icon.png"

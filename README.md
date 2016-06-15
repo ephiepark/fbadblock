@@ -1,2 +1,2 @@
-# fbadblock
-Blocks ads in fb comments
+# CommentOut
+Blocks ads in Facebook comments

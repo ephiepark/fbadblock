@@ -4,16 +4,15 @@ var hasImage = function(elem) {
 }
 
 /* Set of filtering rules */
-var rules = [
-  function(comment) { // Recognize images
-    if (hasImage(comment)) {
-      return true;
-    }
-    return false;
+var filters = [
+  /* Recognize images */
+  function(comment) {
+    return hasImage(comment);
   },
-  function(comment) { // Recognize texts with special characters
-    var comment_str = $(comment).text();
-    if (comment_str.length > 100) {
+  /* Recognize texts with special characters */
+  function(comment) {
+    var comment_str = $($(comment).find(".UFICommentBody")).text();
+    if (comment_str.length > 150) {
       var special_characters = ['★', '※', '☞', '✓', '♫', '☂', '◁', '▶'];
       for (var i = 0; i < special_characters.length; i++) {
         if (comment_str.indexOf(special_characters[i]) >= 0) {
@@ -26,10 +25,28 @@ var rules = [
   /* TO ADD MORE */
 ];
 
-/* Apply rules to each comment */
+/* Set of filtering exceptions */
+var exceptions = [
+  function(comment) {
+    var likes = $(comment).find(".UFICommentLikeButton").children("span").text();
+    return likes > 20;
+  },
+  function(comment) {
+    var comment_str = $($(comment).find(".UFICommentBody")).text();
+    var english = /^[A-Za-z0-9]*$/;
+    return comment_str.length > 5 && english.test(comment_str.substring(0, 5));
+  }
+];
+
+/* Test exceptions and filters on each comment */
 var checkComment = function(comment) {
-  for (var i = 0; i < rules.length; i++) {
-    if (rules[i](comment)) {
+  for (var i = 0; i < exceptions.length; i++) {
+    if (exceptions[i](comment)) {
+      return false;
+    }
+  }
+  for (var i = 0; i < filters.length; i++) {
+    if (filters[i](comment)) {
       return true;
     }
   }
