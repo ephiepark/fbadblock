@@ -12,17 +12,15 @@ var filters = [
   /* Recognize texts with special characters */
   function(comment) {
     var comment_str = $($(comment).find(".UFICommentBody")).text();
-    if (comment_str.length > 150) {
-      var special_characters = ['★', '※', '☞', '✓', '♫', '☂', '◁', '▶'];
-      for (var i = 0; i < special_characters.length; i++) {
-        if (comment_str.indexOf(special_characters[i]) >= 0) {
-          return true;
-        }
+    var special_characters = ['★', '☆', '※', '☞', '☜', '■', '●', '✓', '♫', '☂', '◀', '◁', '▶'];
+    for (var i = 0; i < special_characters.length; i++) {
+      if (comment_str.indexOf(special_characters[i]) >= 0) {
+        return true;
       }
     }
     return false;
   }
-  /* TO ADD MORE */
+  /* TODO: "SEE MORE" */
 ];
 
 /* Set of filtering exceptions */
