@@ -31,8 +31,8 @@ var exceptions = [
   },
   function(comment) {
     var comment_str = $($(comment).find(".UFICommentBody")).text();
-    var english = /^[A-Za-z0-9]*$/;
-    return comment_str.length > 2 && english.test(comment_str.substring(0, 2));
+    var english = /^[A-Za-z]*$/;
+    return comment_str.length > 5 && english.test(comment_str.substring(0, 5));
   }
 ];
 
