@@ -5,11 +5,11 @@ var hasImage = function(elem) {
 
 /* Set of filtering rules */
 var filters = [
-  /* Recognize images */
+  /* Check if image exists */
   function(comment) {
     return hasImage(comment);
   },
-  /* Recognize texts with special characters */
+  /* Check if special characters exist */
   function(comment) {
     var comment_str = $($(comment).find(".UFICommentBody")).text();
     var special_characters = ['★', '☆', '※', '☞', '☜', '■', '●', '✓', '♫', '☂', '◀', '◁', '▶'];
@@ -25,18 +25,20 @@ var filters = [
 
 /* Set of filtering exceptions */
 var exceptions = [
+  /* Check if there are many likes */
   function(comment) {
     var likes = $(comment).find(".UFICommentLikeButton").children("span").text();
     return likes > 20;
   },
+  /* Check if Korean letters exist */
   function(comment) {
     var comment_str = $($(comment).find(".UFICommentBody")).text();
-    var english = /^[A-Za-z]*$/;
-    return comment_str.length > 10 && english.test(comment_str.substring(0, 10));
+    var korean = /[\u3131-\u314e|\u314f-\u3163|\uac00-\ud7a3]/g;
+    return !korean.test(comment_str);
   }
 ];
 
-/* Test exceptions and filters on each comment */
+/* Apply exceptions and filters on each comment */
 var checkComment = function(comment) {
   for (var i = 0; i < exceptions.length; i++) {
     if (exceptions[i](comment)) {
