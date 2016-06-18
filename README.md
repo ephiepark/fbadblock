@@ -1,2 +1,2 @@
 # CommentOut
-Blocks ads in Facebook comments
+Blocks ads in Facebook comments.
