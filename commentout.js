@@ -34,7 +34,7 @@ var exceptions = [
   function(comment) {
     var comment_str = $($(comment).find(".UFICommentBody")).text();
     var korean = /[\u3131-\u314e|\u314f-\u3163|\uac00-\ud7a3]/g;
-    return !korean.test(comment_str);
+    return comment_str.length>0 && !korean.test(comment_str);
   }
 ];
 
