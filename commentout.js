@@ -27,7 +27,7 @@ var filters = [
 var exceptions = [
   /* Check if there are many likes */
   function(comment) {
-    var likes = $(comment).find(".UFICommentLikeButton").children("span").text();
+    var likes = $(comment).find(".UFICommentLikeButton").children("span").text().replace(",","");
     return likes > 20;
   },
   /* Check if Korean letters exist */
