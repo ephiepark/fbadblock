@@ -3,7 +3,7 @@
 
     "name": "CommentOut",
     "description": "Blocks ads in Facebook comments.",
-    "version": "1.61",
+    "version": "1.62",
 
     "icons": {
       "16": "icon16.png",
