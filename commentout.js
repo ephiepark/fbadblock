@@ -22,13 +22,17 @@ var filters = [
   },
   /* Check if blacklisted phrases exist */
   function(comment) {
-    chrome.storage.local.get('blacklist_str', function(object) {
-      if (object == null) {
+    chrome.storage.local.get('blacklist', function(object) {
+      if (object['blacklist'] == null) {
         return false;
       }
+      console.log(object['blacklist']);
+      var blacklist = object['blacklist'].split("||");
       var comment_str = $($(comment).find(".UFICommentBody")).text();
-      for (var i = 0; i < object['blacklist_str'].length; i++) {
-        if (comment_str.indexOf(object['blacklist_str'][i]) >= 0) {
+      for (var i = 0; i < blacklist.length; i++) {
+        if (comment_str.indexOf(blacklist[i]) >= 0) {
+          console.log(comment_str);
+          console.log(blacklist[i]);
           return true;
         }
       }

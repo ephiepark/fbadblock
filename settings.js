@@ -19,6 +19,37 @@ $(function() {
     });
 });
 */
+
+var add_blacklist = function(phrase) {
+    chrome.storage.local.get('blacklist', function(object) {
+        var blacklist = object['blacklist'];
+        if (object == null) {
+            blacklist = "";    
+        }
+        blacklist = blacklist + "||" + phrase;
+        chrome.storage.local.set({'blacklist': blacklist}, function() {
+            console.log("success");
+        });
+    });
+};
+
+var remove_blacklist = function(phrase) {
+    chrome.storage.local.get('blacklist', function(object) {
+        var blacklist_str = object['blacklist'];
+        var blacklist = blacklist_str.split("||");
+        blacklist_str = "";
+        for (var i = 0; i < blacklist.length; i++) {
+            if (blacklist[i] != phrase) {
+                blacklist_str = blacklist_str + "||";
+            }
+        }
+        
+        chrome.storage.local.set({'blacklist': blacklist}, function() {
+            console.log("success");
+        });
+    });
+};
+
 var id = 0;
 function Task(task) {
 	this.id = id++;
@@ -51,7 +82,11 @@ var addNewTask = function(task) {
 
 	li.find(".remove-btn").on("click", function() {
 		li.remove();
-	});
+	    remove_blacklist(task);
+    });
+
+    add_blacklist(task);
+
   /*
 	li.find(".a-task").on("click", function() {
 		$( this ).toggleClass("is-done");
