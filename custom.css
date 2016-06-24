@@ -1,0 +1,43 @@
+html {
+	font-family: "Quattrocento Sans", Helvetica, Arial, Verdana, sans-serif;
+	color: #424242;
+	background-color: #ffffff;
+	height: 100%;
+}
+
+body {
+  width: 700px;
+  min-height: 700px;
+}
+
+.container {
+	background-color: #ffffff;
+	height: auto;
+	width: 40rem;
+	margin-top: 5rem;
+	font-size: 1.2rem;
+}
+
+.material-icons {
+	color: #37474f;
+}
+
+.is-done {
+	text-decoration: line-through;
+}
+
+.collection {
+	padding-left: 1rem;
+	padding-right: 1rem;
+	padding-bottom: 1rem;
+}
+
+input[type=text] {
+	font-size: 1.2rem;
+	background-color: #fafafa;
+}
+/* label underline focus color */
+input[type=text]:focus:not([readonly]) {
+	border-bottom: 1px solid #37474f;
+  box-shadow: 0 1px 0 0 #37474f;
+}
