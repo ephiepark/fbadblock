@@ -19,6 +19,20 @@ var filters = [
       }
     }
     return false;
+  },
+  /* Check if blacklisted phrases exist */
+  function(comment) {
+    chrome.storage.local.get('blacklist_str', function(object) {
+      if (object == null) {
+        return false;
+      }
+      var comment_str = $($(comment).find(".UFICommentBody")).text();
+      for (var i = 0; i < object['blacklist_str'].length; i++) {
+        if (comment_str.indexOf(object['blacklist_str'][i]) >= 0) {
+          return true;
+        }
+      }
+    });
   }
   /* TODO: "SEE MORE" */
 ];

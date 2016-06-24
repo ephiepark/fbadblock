@@ -12,7 +12,8 @@
     },
 
     "browser_action": {
-        "default_icon": "icon128.png"
+        "default_icon": "icon128.png",
+        "default_popup": "settings.html"
     },
 
     "content_scripts": [
@@ -23,6 +24,7 @@
         }
     ],
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "storage"
     ]
 }
