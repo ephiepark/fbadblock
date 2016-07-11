@@ -23,10 +23,11 @@ $(function() {
 var add_blacklist = function(phrase) {
     chrome.storage.local.get('blacklist', function(object) {
         var blacklist = object['blacklist'];
-        if (object == null) {
-            blacklist = "";    
+        if (blacklist.length == 0) {
+            blacklist = phrase;    
+        }else{
+            blacklist = blacklist + "||" + phrase;
         }
-        blacklist = blacklist + "||" + phrase;
         chrome.storage.local.set({'blacklist': blacklist}, function() {
             console.log("success");
         });
@@ -37,14 +38,20 @@ var remove_blacklist = function(phrase) {
     chrome.storage.local.get('blacklist', function(object) {
         var blacklist_str = object['blacklist'];
         var blacklist = blacklist_str.split("||");
+        if (blacklist_str.length == 0) {
+          blacklist = [];
+        }
         blacklist_str = "";
         for (var i = 0; i < blacklist.length; i++) {
             if (blacklist[i] != phrase) {
-                blacklist_str = blacklist_str + "||";
-            }
+              if (blacklist_str.length == 0) {
+                blacklist_str = blacklist[i];
+              }else{
+                blacklist_str = blacklist_str + "||" + blacklist[i];
+              }
+           }
         }
-        
-        chrome.storage.local.set({'blacklist': blacklist}, function() {
+        chrome.storage.local.set({'blacklist': blacklist_str}, function() {
             console.log("success");
         });
     });
@@ -83,9 +90,7 @@ var addNewTask = function(task) {
 	li.find(".remove-btn").on("click", function() {
 		li.remove();
 	    remove_blacklist(task);
-    });
-
-    add_blacklist(task);
+    }); 
 
   /*
 	li.find(".a-task").on("click", function() {
@@ -95,14 +100,28 @@ var addNewTask = function(task) {
 };
 
 $( document ).ready(function() {
-	$( "#input-task" ).on("keypress", function(e) {
-		var key = e.which || e.keyCode;
+  chrome.storage.local.get('blacklist', function(object) {
+    var blacklist_str = object['blacklist'];
+    var blacklist = blacklist_str.split("||");
+    $(".container").append($("<p>" + blacklist_str + "</p>"));
+    if (blacklist_str.length == 0) {
+      blacklist = [];
+    }
+    for (var i = 0; i < blacklist.length; i++) {
+      $(".container").append($("<p>" + blacklist.length +"</p>"));
+      addNewTask(blacklist[i]);
+    }
+  });
+
+	$( "#input-task" ).on("keypress", function(e) {	
+    var key = e.which || e.keyCode;
 		if (key === 13) {
 			var task = $( "#input-task" ).val();
     	if (task !== "") {
     		$( "#input-task" ).val("");
       	addNewTask(task);
-    	}
+    	  add_blacklist(task);
+      }
     }
 	});
 });

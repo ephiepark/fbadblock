@@ -1,6 +1,7 @@
 /* Check if image exists */
 var hasImage = function(elem) {
-  return $($(elem).find(".UFICommentContent")[0]).children("div").length == 2;
+  console.log($(elem).find(".mvs").length);
+  return $(elem).find(".mvs").length > 0;
 }
 
 /* Set of filtering rules */
@@ -22,21 +23,14 @@ var filters = [
   },
   /* Check if blacklisted phrases exist */
   function(comment) {
-    chrome.storage.local.get('blacklist', function(object) {
-      if (object['blacklist'] == null) {
-        return false;
+    var comment_str = $($(comment).find(".UFICommentBody")).text();
+    for (var i = 0; i < blacklist.length; i++) {
+      if (comment_str.indexOf(blacklist[i]) >= 0) {
+        console.log(comment_str);
+        console.log(blacklist[i]);
+        return true;
       }
-      console.log(object['blacklist']);
-      var blacklist = object['blacklist'].split("||");
-      var comment_str = $($(comment).find(".UFICommentBody")).text();
-      for (var i = 0; i < blacklist.length; i++) {
-        if (comment_str.indexOf(blacklist[i]) >= 0) {
-          console.log(comment_str);
-          console.log(blacklist[i]);
-          return true;
-        }
-      }
-    });
+    }
   }
   /* TODO: "SEE MORE" */
 ];
@@ -71,34 +65,47 @@ var checkComment = function(comment) {
   return false;
 };
 
+var blacklist;
+
 /* Executed upon automatic comment load */
 var onCommentLoad = function(event) {
-  $(event.target).find(".UFIComment").each(function(index) {
-    if (!$(this).hasClass("co-checked") && checkComment(this)) {
-      var filteredArea = $(this).find(".UFICommentBody");
-      if (hasImage(this)) {
-        filteredArea = filteredArea.add($($(this).find(".UFICommentContent")[0]).children("div"));
+  chrome.storage.local.get('blacklist', function(object) {
+    if (object['blacklist'] != null) {
+      console.log(object['blacklist']);
+      blacklist = object['blacklist'].split("||");
+      if (object['blacklist'].length == 0) {
+          blacklist = [];
       }
-      filteredArea.css("display", "none");
-      var btn = $("<a></a>");
-      var hide = $("<span>Hide</span>");
-      var show = $("<span>Show</span>");
-      btn.append(hide);
-      hide.hide();
-      btn.append(show);
-      btn.click(function() {
-        filteredArea.toggle();
-        hide.toggle();
-        show.toggle();
-      });
-      btn.css({
-        "display"      : "inline-block",
-        "padding-left" : "3px",
-        "color"        : "#ee6e73"
-      });
-      $($($(this).find(".UFICommentContent")[0]).children("span")[0]).after(btn);
+    }else{
+      blacklist = [];
     }
-    $(this).addClass("co-checked");
+    $(event.target).find(".UFIComment").each(function(index) {
+      if (!$(this).hasClass("co-checked") && checkComment(this)) {
+        var filteredArea = $(this).find(".UFICommentBody");
+        if (hasImage(this)) {
+          filteredArea = filteredArea.add($($(this).find(".UFICommentContent")[0]).children("div"));
+        }
+        filteredArea.css("display", "none");
+        var btn = $("<a></a>");
+        var hide = $("<span>Hide</span>");
+        var show = $("<span>Show</span>");
+        btn.append(hide);
+        hide.hide();
+        btn.append(show);
+        btn.click(function() {
+          filteredArea.toggle();
+          hide.toggle();
+          show.toggle();
+        });
+        btn.css({
+          "display"      : "inline-block",
+          "padding-left" : "3px",
+          "color"        : "#ee6e73"
+        });
+        $($($(this).find(".UFICommentContent")[0]).children("span")[0]).after(btn);
+      }
+      $(this).addClass("co-checked");
+    });
   });
 };
 
