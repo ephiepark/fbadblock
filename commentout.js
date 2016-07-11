@@ -1,6 +1,5 @@
 /* Check if image exists */
 var hasImage = function(elem) {
-  console.log($(elem).find(".mvs").length);
   return $(elem).find(".mvs").length > 0;
 }
 
@@ -26,8 +25,6 @@ var filters = [
     var comment_str = $($(comment).find(".UFICommentBody")).text();
     for (var i = 0; i < blacklist.length; i++) {
       if (comment_str.indexOf(blacklist[i]) >= 0) {
-        console.log(comment_str);
-        console.log(blacklist[i]);
         return true;
       }
     }
@@ -68,10 +65,9 @@ var checkComment = function(comment) {
 var blacklist;
 
 /* Executed upon automatic comment load */
-var onCommentLoad = function(event) {
+var onCommentLoad = function(event, flag) {
   chrome.storage.local.get('blacklist', function(object) {
     if (object['blacklist'] != null) {
-      console.log(object['blacklist']);
       blacklist = object['blacklist'].split("||");
       if (object['blacklist'].length == 0) {
           blacklist = [];
@@ -80,13 +76,14 @@ var onCommentLoad = function(event) {
       blacklist = [];
     }
     $(event.target).find(".UFIComment").each(function(index) {
-      if (!$(this).hasClass("co-checked") && checkComment(this)) {
+      var check_res = checkComment(this);
+      if ((!$(this).hasClass("co-checked") || flag) && check_res) {
         var filteredArea = $(this).find(".UFICommentBody");
         if (hasImage(this)) {
           filteredArea = filteredArea.add($($(this).find(".UFICommentContent")[0]).children("div"));
         }
         filteredArea.css("display", "none");
-        var btn = $("<a></a>");
+        var btn = $("<a class='co-btn'></a>");
         var hide = $("<span>Hide</span>");
         var show = $("<span>Show</span>");
         btn.append(hide);
@@ -102,7 +99,16 @@ var onCommentLoad = function(event) {
           "padding-left" : "3px",
           "color"        : "#ee6e73"
         });
-        $($($(this).find(".UFICommentContent")[0]).children("span")[0]).after(btn);
+        if ($(this).find(".co-btn").length == 0) {
+          $($($(this).find(".UFICommentContent")[0]).children("span")[0]).after(btn);
+        }
+      }else if ($(this).find(".co-btn").length > 0 && !check_res) {
+        $(this).find(".co-btn").remove();
+        var filteredArea = $(this).find(".UFICommentBody");
+        if (hasImage(this)) {
+          filteredArea = filteredArea.add($($(this).find(".UFICommentContent")[0]).children("div"));
+        }
+        filteredArea.show();
       }
       $(this).addClass("co-checked");
     });
@@ -113,6 +119,22 @@ var onCommentLoad = function(event) {
 var onViewMoreComments = function(event) {
   $(event.target).parents(".UFIList").bind("DOMSubtreeModified", onCommentLoad);
 }
+
+var checkAll = function(flag) {
+  a = {target: document};
+  onCommentLoad(a, flag);
+};
+
+$(document).ready(function() {
+  checkAll(false);
+});
+
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse){
+  if(request.blacklistEntered) { 
+    checkAll(true);    
+  }
+});
 
 $("body").bind("DOMNodeInserted", onCommentLoad);
 $("body").on("click", ".UFIPagerLink", onViewMoreComments);
